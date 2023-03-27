@@ -6,6 +6,7 @@ from odoo.addons.portal.controllers.portal import CustomerPortal, pager as porta
 
 
 class OpenController(http.Controller):
+    _courses_per_page = 2
     # Return a simple string
     @http.route('/hello', auth='public')
     def hello(self):
@@ -22,10 +23,9 @@ class OpenController(http.Controller):
         return http.redirect_with_hash('/web')
     
     # Return a template
-    @http.route('/courses', auth='public', website=True)
-    def courses(self):
+    @http.route(['/courses', '/courses/page/<int:page>'], auth='public', website=True)
+    def courses(self, page=0):
         search = request.params.get('search')
-        
         try:
             if search is not None:
                 courses = request.env['open_academy.course'].search([('title', 'ilike', search)])
@@ -34,8 +34,18 @@ class OpenController(http.Controller):
         except:
             return "<h1>There is an error in the API</h1>"
 
+        total = len(courses)
+        pager = request.website.pager(
+            url="/courses",
+            total=total ,
+            page=page,
+            step=self._courses_per_page,
+        )
+        offset = pager ['offset']
+        courses = courses [offset: offset + self._courses_per_page]
         return request.render('open_academy_controllers.courses_template', {
             'course': courses.sorted(key=lambda r: r.title),
+            'pager': pager,
         })
         
     @http.route('/sessions', auth='public', website=True)

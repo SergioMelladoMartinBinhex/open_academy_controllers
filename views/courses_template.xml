@@ -25,28 +25,26 @@
                         </div>
                     </div>     
                     <div class="row">           
-                        <table class="table table-striped">
-                            <thead>
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Responsible</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <t t-foreach="course" t-as="c">
                                 <tr>
-                                    <th>Title</th>
-                                    <th>Responsible</th>
-                                    <th>Description</th>
+                                    <td><a t-att-href="'/course/' + str(c.id)"><t t-esc="c.title"/></a></td>
+                                    <td><t t-esc="c.responsible.name"/></td>
+                                    <td><t t-esc="c.description"/></td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                                <t t-foreach="course" t-as="c">
-                                    <tr>
-                                        <td>
-                                            <a t-att-href="'/course/' + str(c.id)">
-                                                <t t-esc="c.title"/>
-                                            </a>
-                                        </td>
-                                        <td><t t-esc="c.responsible.name"/></td>
-                                        <td><t t-esc="c.description"/></td>
-                                    </tr>
-                                </t>
-                            </tbody>
-                        </table>
+                            </t>
+                        </tbody>
+                    </table>
+                    <t t-call="website.pager"/>
+
                     </div>
                     <div class="card-footer small text-center text-muted border-top-0 pt-1 pb-1 d-none d-lg-block" data-oe-model="ir.ui.view" data-oe-id="463" data-oe-field="arch" data-oe-xpath="/t[1]/div[1]/div[1]/div[2]">
                         Con tecnología de <a target="_blank" href="http://www.odoo.com?utm_source=db&amp;utm_medium=portal" title="odoo"><img src="/web/static/src/img/logo.png" alt="Logo de Odoo" height="15" loading="lazy" style=""/></a>
