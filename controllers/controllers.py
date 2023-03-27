@@ -249,10 +249,3 @@ class OpenController(http.Controller):
             
         else:
             return http.redirect_with_hash('/web/login')
-
-
-        
-
-            
-              
-        
