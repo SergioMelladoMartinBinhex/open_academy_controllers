@@ -1,0 +1,58 @@
+<odoo>
+    <data>
+        <template id="courses_template" name="Courses">
+            <t t-call="website.layout">
+                <div class="container">
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1 row">
+                        <li><a href="/my/home"><i class="fa fa-home"></i></a></li>
+                        <li class="active">/ Courses</li>
+                    </ol>
+                </div>
+                <div class="container mt-2">
+                    <div class="row">
+                        <div class="display-flex col-lg-12">
+                            <h1 >Courses</h1>
+                            <div>
+                                <form method="post" action="/courses">
+                                    <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <input type="text" class="form-control" placeholder="Search..." style="float: right; width: 30%; margin-bottom: 10px;"
+                                        name="search"/>
+                                </form>
+                            </div>
+                        </div>
+                    </div>     
+                    <div class="row">           
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Title</th>
+                                    <th>Responsible</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="course" t-as="c">
+                                    <tr>
+                                        <td>
+                                            <a t-att-href="'/course/' + str(c.id)">
+                                                <t t-esc="c.title"/>
+                                            </a>
+                                        </td>
+                                        <td><t t-esc="c.responsible.name"/></td>
+                                        <td><t t-esc="c.description"/></td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="card-footer small text-center text-muted border-top-0 pt-1 pb-1 d-none d-lg-block" data-oe-model="ir.ui.view" data-oe-id="463" data-oe-field="arch" data-oe-xpath="/t[1]/div[1]/div[1]/div[2]">
+                        Con tecnología de <a target="_blank" href="http://www.odoo.com?utm_source=db&amp;utm_medium=portal" title="odoo"><img src="/web/static/src/img/logo.png" alt="Logo de Odoo" height="15" loading="lazy" style=""/></a>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>

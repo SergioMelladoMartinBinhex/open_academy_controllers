@@ -1,0 +1,156 @@
+<odoo>
+    <data>
+        <template id="course_id_template" name="Cursos">
+            <t t-call="website.layout">
+                <div class="container">
+                    <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1 row">
+                        <li><a href="/my/home"><i class="fa fa-home"></i></a></li>
+                        <li><a href="/courses">/ Courses</a></li>
+                        <li class="active">/ <t t-esc="course.title"/></li>
+                    </ol>
+                </div>
+                <div class="container mt-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h1><t t-esc="course.title"/></h1>
+                            <h5><t t-esc="course.responsible.name"/></h5>
+                            <p><t t-esc="course.description"/></p>
+                        </div>
+
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <h3>Sessions</h3>
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Instructor</th>
+                                        <th>Start Date</th>
+                                        <th>Duration</th>
+                                        <th>Seats</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="course.sessions.sorted(key=lambda r: r.initial_date)" t-as="s">
+                                        <tr>
+                                            <td>
+                                                <a t-att-href="'/session/' + str(s.id)">
+                                                    <t t-esc="s.name"/>
+                                                </a>
+                                            </td>
+                                            <td><t t-esc="s.instructor.name"/></td>
+                                            <td><t t-esc="s.initial_date"/></td>
+                                            <td><t t-esc="s.duration"/> hours</td>
+                                            <td><t t-esc="s.number_of_seats"/></td>
+                                            <td>
+                                                <t t-if="s.attendees_count != s.number_of_seats">
+                                                    <t t-if="request.env.user.partner_id.id in s.attendees.ids">
+                                                        <div class="d-flex">
+                                                            <div class="container">
+                                                                <a class="btn btn-danger btn-block" type="button" t-att-href="'/leave/' + str(s.id) + '/course'">Leave</a>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="d-flex">
+                                                            <div class="container">
+                                                                <a class="btn btn-primary btn-block" type="button" t-att-href="'/join/' + str(s.id) + '/course'">Join</a>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                </t>
+                                                <t t-else="">
+                                                    <t t-if="request.env.user.partner_id.id in s.attendees.ids">
+                                                        <div class="d-flex">
+                                                            <div class="container">
+                                                                <a class="btn btn-danger btn-block" type="button" t-att-href="'/leave/' + str(s.id) + '/course'">Leave</a>
+                                                            </div>
+                                                        </div>
+                                                    </t>
+                                                    <t t-else="">
+                                                        <div class="container">
+                                                            <p class="text-danger">Session is full</p>
+                                                        </div>                                             
+                                                    </t>
+                                                </t>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                            <div class="card-footer small text-center text-muted border-top-0 pt-1 pb-1 d-none d-lg-block" data-oe-model="ir.ui.view" data-oe-id="463" data-oe-field="arch" data-oe-xpath="/t[1]/div[1]/div[1]/div[2]">
+                                Con tecnología de <a target="_blank" href="http://www.odoo.com?utm_source=db&amp;utm_medium=portal" title="odoo"><img src="/web/static/src/img/logo.png" alt="Logo de Odoo" height="15" loading="lazy" style=""/></a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12 mt-2">
+                            <h3>Comments</h3>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mt32">
+                                        <div class="media mt32">
+                                            <div>
+                                                <img t-att-src="'/web/image/res.partner/%s/image_128' % request.env.user.partner_id.id" width="40" height="40" 
+                                                    class="o_portal_chatter_avatar o_object_fit_cover" alt="Avatar" style="margin-right: 18px;"/>
+                                            </div>
+                                            <div class="media-body">
+                                                <form method="post" t-att-action="'/course/comment/' + str(course.id)">
+                                                    <textarea class="form-control" name="comment" placeholder="Write a comment..." rows="4"
+                                                        style="border-radius: 4px; background-color: #f8f8f8;"></textarea>     
+                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                    <button actions="submit" class="btn btn-primary" style="margin-top: 16px;">
+                                                        <i class="fa fa-comment"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-6" style="margin-top: 50px !important;">
+                                        <t t-foreach="course.comments" t-as="c">
+                                            <div class="o_portal_chatter_messages">
+                                                <div class="o_portal_chatter_message">
+                                                    <div class="o_portal_chatter_message_header">
+                                                        <div class="o_portal_chatter_message_header_title">
+                                                            <span class="o_portal_chatter_message_author_avatar">
+                                                                <img t-att-src="'/web/image/mail.message/' + str(c.id) + '/author_avatar'" alt="Avatar" width="40" height="40"/>
+                                                            </span>
+                                                            <span class="o_portal_chatter_message_author">
+                                                                <h5 class="d-inline"><t t-esc="c.author_id.name"/></h5>
+                                                            </span>
+                                                            <span class="o_portal_chatter_message_date">
+                                                                <p class="text-muted d-inline">- <t t-esc="c.date"/></p>
+                                                            </span>
+                                                            <form method="post" t-att-action="'/course/comment/delete/' + str(course.id)" >
+                                                                <t t-if="request.env.user.partner_id.id == c.author_id.id">
+                                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                                    <input type="hidden" name="comment_id" t-att-value="c.id"/>
+                                                                    <input type="hidden" name="course_id" t-att-value="course.id"/>
+                                                                    <button type="submit" class="btn btn-danger float-right" style="display: flex; align-items: center;">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </button>
+                                                                </t>
+                                                            </form>
+                                                        </div>
+                                                    </div>
+                                                    <div class="o_portal_chatter_message_body">
+                                                        <p><t t-esc="c.body[3:-4]"/></p>
+                                                    </div>
+                                                </div>
+                                                <hr/>
+                                            </div>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </t>
+        </template>
+    </data>
+</odoo>
+
