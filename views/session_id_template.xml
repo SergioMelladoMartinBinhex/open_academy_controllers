@@ -91,6 +91,60 @@
                             </t>
                         </div>
                     </div>
+                    <div class="mt32">
+                        <h3>Comments</h3>
+                        <div class="media mt32">
+                            <div>
+                                <img t-att-src="'/web/image/res.partner/%s/image_128' % request.env.user.partner_id.id" width="40" height="40" 
+                                    class="o_portal_chatter_avatar o_object_fit_cover" alt="Avatar" style="margin-right: 18px;"/>
+                            </div>
+                            <div class="media-body">
+                                <form method="post" t-att-action="'/session/comment/' + str(session.id)">
+                                    <textarea class="form-control" name="comment" placeholder="Write a comment..." rows="4"
+                                        style="border-radius: 4px; background-color: #f8f8f8;"></textarea>     
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button actions="submit" class="btn btn-primary" style="margin-top: 16px;">
+                                        <i class="fa fa-comment"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="mt-6" style="margin-top: 50px !important;">
+                            <t t-foreach="session.comments" t-as="s">
+                                <div class="o_portal_chatter_messages">
+                                    <div class="o_portal_chatter_message">
+                                        <div class="o_portal_chatter_message_header">
+                                            <div class="o_portal_chatter_message_header_title">
+                                                <span class="o_portal_chatter_message_author_avatar">
+                                                    <img t-att-src="'/web/image/mail.message/' + str(s.id) + '/author_avatar'" alt="Avatar" width="40" height="40"/>
+                                                </span>
+                                                <span class="o_portal_chatter_message_author">
+                                                    <h5 class="d-inline"><t t-esc="s.author_id.name"/></h5>
+                                                </span>
+                                                <span class="o_portal_chatter_message_date">
+                                                    <p class="text-muted d-inline">- <t t-esc="s.date"/></p>
+                                                </span>
+                                                <form method="post" t-att-action="'/session/comment/delete/' + str(session.id)" >
+                                                    <t t-if="request.env.user.partner_id.id == s.author_id.id">
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <input type="hidden" name="comment_id" t-att-value="s.id"/>
+                                                        <input type="hidden" name="session_id" t-att-value="session.id"/>
+                                                        <button type="submit" class="btn btn-danger float-right" style="display: flex; align-items: center;">
+                                                            <i class="fa fa-trash"></i>
+                                                        </button>
+                                                    </t>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        <div class="o_portal_chatter_message_body">
+                                            <p><t t-esc="s.body[3:-4]"/></p>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                </div>
+                            </t>
+                        </div>
+                    </div>
                 </div>
             </t>
         </template>

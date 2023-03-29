@@ -13,6 +13,12 @@
                         <div class="display-flex col-lg-12">
                             <h1 >Courses</h1>
                             <div>
+                            <form method="post" action="/courses">
+                                    <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
+                                        <i class="fa fa-refresh"></i>
+                                    </button>
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                </form>
                                 <form method="post" action="/courses">
                                     <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
                                         <i class="fa fa-search"></i>
@@ -31,6 +37,7 @@
                                 <th>Title</th>
                                 <th>Responsible</th>
                                 <th>Description</th>
+                                <th>Modalidad</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -39,6 +46,9 @@
                                     <td><a t-att-href="'/course/' + str(c.id)"><t t-esc="c.title"/></a></td>
                                     <td><t t-esc="c.responsible.name"/></td>
                                     <td><t t-esc="c.description"/></td>
+                                    <td><t t-if="c.type == 'presential'"><span class="badge badge-success">Presencial</span></t>
+                                        <t t-else=""><span class="badge badge-primary">Online</span></t>
+                                    </td>
                                 </tr>
                             </t>
                         </tbody>

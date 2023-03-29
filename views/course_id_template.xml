@@ -12,7 +12,11 @@
                 <div class="container mt-2">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1><t t-esc="course.title"/></h1>
+                            <h1 style="dis"><t t-esc="course.title"/></h1>
+                            <div style="float: right; margin-bottom: 10px;">
+                                <t t-if="course.type == 'presential'"><span class="badge badge-success">Presential</span></t>
+                                <t t-else=""><span class="badge badge-primary">Online</span></t>
+                            </div>
                             <h5><t t-esc="course.responsible.name"/></h5>
                             <p><t t-esc="course.description"/></p>
                         </div>

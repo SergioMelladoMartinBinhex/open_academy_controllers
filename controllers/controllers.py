@@ -40,7 +40,9 @@ class OpenController(http.Controller):
             total=total ,
             page=page,
             step=self._courses_per_page,
+            url_args={'search': search} if search else None,
         )
+        
         offset = pager ['offset']
         courses = courses [offset: offset + self._courses_per_page]
         return request.render('open_academy_controllers.courses_template', {
@@ -196,8 +198,6 @@ class OpenController(http.Controller):
             'num_sessions': len(sessions),
         })
         
-            #retorna el valor que viene en params.body
-
 
     @http.route('/course/comment/<int:id>', auth='public', website=True, methods=['POST'])
     def comment(self, id):
@@ -246,6 +246,57 @@ class OpenController(http.Controller):
                 return "<h1>There is an error deleting the comment</h1>"
             
             return http.redirect_with_hash('/course/' + str(course.id))
+            
+        else:
+            return http.redirect_with_hash('/web/login')
+        
+    @http.route('/session/comment/<int:id>', auth='public', website=True, methods=['POST'])
+    def session_comment(self, id):
+        comment = request.params['comment']
+
+        try:
+            session = request.env['open_academy.session'].search([('id', '=', id)])
+        except:
+            return "<h1>There is an error in the API</h1>"
+        
+        if request.session.uid:
+            try:
+                user = request.env['res.users'].search([('id', '=', request.session.uid)])
+                partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
+                c = request.env['mail.message'].create({
+                    'model': 'open_academy.session',
+                    'res_id': session.id,
+                    'body': comment,
+                    'message_type': 'comment',
+                    'author_id': partner.id,
+                })
+                session.comments = [(4, c.id)]
+            except:
+                return "<h1>There is an error adding the comment</h1>"
+            
+            return http.redirect_with_hash('/session/' + str(session.id))
+            
+        else:
+            return http.redirect_with_hash('/web/login')
+        
+    @http.route('/session/comment/delete/<int:id>', auth='public', website=True, methods=['POST'])
+    def delete_session_comment(self, id):
+        comment_id = request.params['comment_id']
+        
+        try:
+            session = request.env['open_academy.session'].search([('id', '=', id)])
+        except:
+            return "<h1>There is an error in the API</h1>"
+        
+        if request.session.uid:
+            try:
+                c = request.env['mail.message'].search([('id', '=', comment_id)])
+                session.comments = [(3, c.id)]
+                c.unlink()
+            except:
+                return "<h1>There is an error deleting the comment</h1>"
+            
+            return http.redirect_with_hash('/session/' + str(session.id))
             
         else:
             return http.redirect_with_hash('/web/login')
