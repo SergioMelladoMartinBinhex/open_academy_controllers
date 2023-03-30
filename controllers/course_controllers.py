@@ -6,60 +6,112 @@ from odoo.addons.portal.controllers.portal import CustomerPortal, pager as porta
 
 
 class OpenController(http.Controller):
-    _courses_per_page = 2
-    # Return a simple string
+    _t = 4
+    
     @http.route('/hello', auth='public')
     def hello(self):
         return "Hello World"
     
-    # Return a simple string with a parameter
     @http.route('/hello/<string:name>', auth='public')
     def hello_name(self, name):
         return "Hello %s" % name
     
-    # Rediretion
     @http.route('/test2', auth='public')
     def back_to_web(self):
         return http.redirect_with_hash('/web')
     
-    # Return a template
     @http.route(['/courses', '/courses/page/<int:page>'], auth='public', website=True)
-    def courses(self, page=0):
-        search = request.params.get('search')
-        try:
-            if search is not None:
-                courses = request.env['open_academy.course'].search([('title', 'ilike', search)])
-            else:
-                courses = request.env['open_academy.course'].search([])  
-        except:
-            return "<h1>There is an error in the API</h1>"
+    def courses(self, page=0):        
+        if request.session.uid:
+            try:
+                search = request.params.get('search')
+                if search is not None:
+                    courses = request.env['open_academy.course'].search([('title', 'ilike', search)])
+                else:
+                    courses = request.env['open_academy.course'].search([])  
+            except:
+                return "<h1>There is an error in the API</h1>"
+        else: 
+            return http.redirect_with_hash('/web/login')
+        
+        sort_by = request.params.get('sort_by')
+        if sort_by is None:
+            courses = sorted(courses, key=lambda r: r.title)
+        else:
+            sort_criteria = sort_by
+            reverse = sort_by.startswith('-')
+            if reverse is True:
+                sort_criteria = sort_by[1:]
+            courses = courses.sorted(key=lambda x: getattr(x, sort_criteria), reverse=reverse)
+            
+        filter_by = request.params.get('filter_by')
+        if filter_by is not None:
+            if filter_by != 'all':
+                courses = [course for course in courses if getattr(course, 'type') == filter_by]
 
         total = len(courses)
         pager = request.website.pager(
             url="/courses",
             total=total ,
             page=page,
-            step=self._courses_per_page,
-            url_args={'search': search} if search else None,
+            step=self._t,
+            url_args={
+                'search': search or None, 
+                'sort_by': sort_by or None,
+                'filter': filter_by or None,
+            },
         )
         
         offset = pager ['offset']
-        courses = courses [offset: offset + self._courses_per_page]
+        courses = courses [offset: offset + self._t]
+        
         return request.render('open_academy_controllers.courses_template', {
-            'course': courses.sorted(key=lambda r: r.title),
+            'course': courses,
             'pager': pager,
+            'filter_by': filter_by,
+            'sort_by': sort_by,
         })
       
-    #Return a template with a parameter  
-    @http.route('/course/<int:id>', auth='public', website=True)
-    def course(self, id):
-        try:
-            course = request.env['open_academy.course'].search([('id', '=', id)]) 
-        except:
-            return "<h1>There is an error in the API</h1>"
+    @http.route(['/course/<int:id>', '/course/<int:id>/page/<int:page>'], auth='public', website=True)
+    def course(self, id, page=0):
+        
+        if request.session.uid:
+            try:
+                course = request.env['open_academy.course'].search([('id', '=', id)]) 
+                sessions = request.env['open_academy.session'].search([('course', '=', id)])
+            except:
+                return "<h1>There is an error in the API</h1>"
+        else:
+            return http.redirect_with_hash('/web/login')
+        
+        sort_by = request.params.get('sort_by')
+        if sort_by is None:
+            sessions = sorted(sessions, key=lambda r: r.initial_date)
+        else:
+            sort_criteria = sort_by
+            reverse = sort_by.startswith('-')
+            if reverse is True:
+                sort_criteria = sort_by[1:]
+            sessions = sessions.sorted(key=lambda x: getattr(x, sort_criteria), reverse=reverse)
+            
+        pager = request.website.pager(
+            url="/course/%s" % id,
+            total=len(sessions),
+            page=page,
+            step=self._t,
+            url_args={
+                'sort_by': sort_by or None,
+            },
+        )
+        
+        offset = pager ['offset']
+        sessions = sessions [offset: offset + self._t]
         
         return request.render('open_academy_controllers.course_id_template', {
             'course': course,
+            'sessions': sessions,
+            'sort_by': sort_by,
+            'pager': pager,
         })            
         
     @http.route('/courses-json', auth='public')
@@ -81,13 +133,17 @@ class OpenController(http.Controller):
 
         
     @http.route(['/my', '/my/home'], auth='public', website=True)
-    def my_sessions(self):        
-        try:
-            user = request.env['res.users'].search([('id', '=', request.session.uid)])
-            partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
-            sessions = request.env['open_academy.session'].search([('attendees', 'in', partner.id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
+    def my_sessions(self):  
+        
+        if request.session.uid:      
+            try:
+                user = request.env['res.users'].search([('id', '=', request.session.uid)])
+                partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
+                sessions = request.env['open_academy.session'].search([('attendees', 'in', partner.id)])
+            except:
+                return "<h1>There is an error in the API</h1>"
+        else: 
+            return http.redirect_with_hash('/web/login')
         
         return request.render('open_academy_controllers.sessions_menu', {
             'num_sessions': len(sessions),
@@ -98,10 +154,13 @@ class OpenController(http.Controller):
     def comment(self, id):
         comment = request.params['comment']
 
-        try:
-            course = request.env['open_academy.course'].search([('id', '=', id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
+        if request.session.uid:
+            try:
+                course = request.env['open_academy.course'].search([('id', '=', id)])
+            except:
+                return "<h1>There is an error in the API</h1>"
+        else:
+            return http.redirect_with_hash('/web/login')
         
         if request.session.uid:
             try:
@@ -127,13 +186,9 @@ class OpenController(http.Controller):
     def delete_comment(self, id):
         comment_id = request.params['comment_id']
         
-        try:
-            course = request.env['open_academy.course'].search([('id', '=', id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
-        
         if request.session.uid:
             try:
+                course = request.env['open_academy.course'].search([('id', '=', id)])
                 c = request.env['mail.message'].search([('id', '=', comment_id)])
                 course.comments = [(3, c.id)]
                 c.unlink()

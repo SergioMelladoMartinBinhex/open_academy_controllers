@@ -45,9 +45,6 @@
                                 </t>
                             </tbody>
                         </table>
-                        <div class="card-footer small text-center text-muted border-top-0 pt-1 pb-1 d-none d-lg-block" data-oe-model="ir.ui.view" data-oe-id="463" data-oe-field="arch" data-oe-xpath="/t[1]/div[1]/div[1]/div[2]">
-                            Con tecnología de <a target="_blank" href="http://www.odoo.com?utm_source=db&amp;utm_medium=portal" title="odoo"><img src="/web/static/src/img/logo.png" alt="Logo de Odoo" height="15" loading="lazy" style=""/></a>
-                        </div>
                     </div>
                 </div>
             </t>

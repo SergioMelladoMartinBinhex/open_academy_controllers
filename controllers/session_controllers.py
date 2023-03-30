@@ -5,12 +5,15 @@ from odoo.http import request
 class SessionControllers(http.Controller):
     @http.route('/sessions', auth='public', website=True)
     def sessions(self):
-        try:
-            user = request.env['res.users'].search([('id', '=', request.session.uid)])
-            partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
-            sessions = request.env['open_academy.session'].search([('attendees', 'in', partner.id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
+        if request.session.uid:
+            try:
+                user = request.env['res.users'].search([('id', '=', request.session.uid)])
+                partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
+                sessions = request.env['open_academy.session'].search([('attendees', 'in', partner.id)])
+            except:
+                return "<h1>There is an error in the API</h1>"
+        else:
+            return http.redirect_with_hash('/web/login')
         
         return request.render('open_academy_controllers.sessions_template', {
             'session': sessions.sorted(key=lambda r: r.initial_date),
@@ -18,14 +21,10 @@ class SessionControllers(http.Controller):
         
     @http.route('/session/<int:id>', auth='public', website=True)
     def session(self, id):
-        try:
-            session = request.env['open_academy.session'].search([('id', '=', id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
-        
         joined = False
         if request.session.uid:
             try:
+                session = request.env['open_academy.session'].search([('id', '=', id)])
                 user = request.env['res.users'].search([('id', '=', request.session.uid)])
                 partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
                 if partner in session.attendees:
@@ -57,14 +56,10 @@ class SessionControllers(http.Controller):
         return request.make_response(json.dumps(results), headers=[('Content-Type', 'application/json')])
     
     @http.route('/join/<int:id>/<string:path>', auth='public', website=True)
-    def join_session(self, id, path):
-        try:
-            session = request.env['open_academy.session'].search([('id', '=', id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
-        
+    def join_session(self, id, path):     
         if request.session.uid:
             try:
+                session = request.env['open_academy.session'].search([('id', '=', id)])
                 user = request.env['res.users'].search([('id', '=', request.session.uid)])
                 partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
                 session.attendees = [(4, partner.id)]
@@ -85,13 +80,9 @@ class SessionControllers(http.Controller):
         
     @http.route('/leave/<int:id>/<string:path>', auth='public', website=True)
     def leave_session(self, id, path):
-        try:
-            session = request.env['open_academy.session'].search([('id', '=', id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
-        
         if request.session.uid:
             try:
+                session = request.env['open_academy.session'].search([('id', '=', id)])
                 user = request.env['res.users'].search([('id', '=', request.session.uid)])
                 partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
                 session.attendees = [(3, partner.id)]
@@ -111,14 +102,10 @@ class SessionControllers(http.Controller):
     @http.route('/session/comment/<int:id>', auth='public', website=True, methods=['POST'])
     def session_comment(self, id):
         comment = request.params['comment']
-
-        try:
-            session = request.env['open_academy.session'].search([('id', '=', id)])
-        except:
-            return "<h1>There is an error in the API</h1>"
         
         if request.session.uid:
             try:
+                session = request.env['open_academy.session'].search([('id', '=', id)])
                 user = request.env['res.users'].search([('id', '=', request.session.uid)])
                 partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
                 c = request.env['mail.message'].create({
