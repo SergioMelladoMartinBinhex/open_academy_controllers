@@ -18,7 +18,16 @@
                                 <t t-if="course.type == 'presential'"><span class="badge badge-success">Presential</span></t>
                                 <t t-else=""><span class="badge badge-primary">Online</span></t>
                             </div>
-                            <h5><t t-esc="course.responsible.name"/></h5>
+                            <h4><i><t t-esc="course.responsible.name"/></i></h4>
+                            <div style="margin-bottom: 10px;">
+                                <t t-if="len(course.documents) > 0">
+                                    <button class="btn btn-primary ">
+                                        <a t-att-href="'/course/' + str(course.id) + '/documents'">
+                                            Documents <i class="fa fa-download"></i>
+                                        </a>
+                                    </button>
+                                </t>
+                            </div>
                             <hr/>
                             <t t-raw="course.description"/>
                             <hr/>

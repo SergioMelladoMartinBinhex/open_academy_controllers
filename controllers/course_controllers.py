@@ -1,9 +1,11 @@
 import json
 from odoo import _, http
-from odoo.http import request
+from odoo.http import request, content_disposition
+import base64
+import zipfile
+import io
 
 from odoo.addons.portal.controllers.portal import CustomerPortal, pager as portal_pager
-
 
 class OpenController(http.Controller):
     _t = 4
@@ -29,8 +31,8 @@ class OpenController(http.Controller):
                     courses = request.env['open_academy.course'].search([('title', 'ilike', search)])
                 else:
                     courses = request.env['open_academy.course'].search([])  
-            except:
-                return "<h1>There is an error in the API</h1>"
+            except Exception as e:
+                return "<h1>There is an error in the API</h1> %s" % e
         else: 
             return http.redirect_with_hash('/web/login')
         
@@ -200,4 +202,29 @@ class OpenController(http.Controller):
         else:
             return http.redirect_with_hash('/web/login')
         
-    
+    @http.route('/course/<int:id>/documents', auth='public', website=True)
+    def documents(self, id):
+        if request.session.uid:
+            try:
+                course = request.env['open_academy.course'].search([('id', '=', id)])
+                documents = course.documents
+                if not documents:
+                    return "<h1>No documents found for this course</h1>"
+                else:
+                    zip_filename = course.title + ".zip"
+                    zip_buffer = io.BytesIO()
+                    with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+                        for document in documents:
+                            data = base64.b64decode(document.datas)
+                            zip_file.writestr(document.name, data)
+                    headers = [
+                        ('Content-Type', 'application/zip'),
+                        ('Content-Disposition', content_disposition(zip_filename))
+                    ]
+                    return request.make_response(zip_buffer.getvalue(), headers)
+            except Exception as e:
+                return "<h1>There is an error in the API</h1> " + str(e)
+        else:
+            return "<h1>You must be logged in to access this page</h1>"
+                
+                
