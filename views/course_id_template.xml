@@ -117,14 +117,23 @@
                     </div>
 
                     <t t-set="images" t-value="course.images"/>
-                    <div class="image-carousel">
-                        <t t-foreach="images" t-as="image">
-                            <div class="image-slide">
-                                <img t-att-src="'data:image/*;base64,%s' % image.datas.decode()" alt="Image"/>
+                    <div class="row margin-top-32">
+                        <div class="col-md-12 mt-2">
+                            <h3>Images</h3>
+                            <div class="row">
+                                <t t-foreach="images" t-as="image">
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <img t-att-src="'data:image/*;base64,%s' % image.datas.decode()" alt="Image"
+                                                    style="width: 280px; height: 280px; object-fit: cover;"/>  
+                                           </div>
+                                        </div>
+                                    </div>
+                                </t>
                             </div>
-                        </t>
+                        </div>
                     </div>
-
                     <div class="row">
                         <div class="col-md-12 mt-2">
                             <h3>Comments</h3>
