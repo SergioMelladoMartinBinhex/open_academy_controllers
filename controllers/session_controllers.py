@@ -3,8 +3,10 @@ from odoo import _, http
 from odoo.http import request
 
 class SessionControllers(http.Controller):
-    @http.route('/sessions', auth='public', website=True)
-    def sessions(self):
+    _t = 4
+    
+    @http.route(['/sessions', '/sessions/page/<int:page>'], auth='public', website=True)
+    def sessions(self, page=0):
         if request.session.uid:
             try:
                 user = request.env['res.users'].search([('id', '=', request.session.uid)])
@@ -15,9 +17,34 @@ class SessionControllers(http.Controller):
         else:
             return http.redirect_with_hash('/web/login')
         
+        sort_by = request.params.get('sort_by')
+        if sort_by is None:
+            sessions = sorted(sessions, key=lambda r: r.initial_date)
+        else:
+            sort_criteria = sort_by
+            reverse = sort_by.startswith('-')
+            if reverse is True:
+                sort_criteria = sort_by[1:]
+            sessions = sessions.sorted(key=lambda x: getattr(x, sort_criteria), reverse=reverse)
+            
+        pager = request.website.pager(
+            url="/sessions",
+            total=len(sessions),
+            page=page,
+            step=self._t,
+            url_args={
+                'sort_by': sort_by or None,
+            },
+        )
+        
+        offset = pager ['offset']
+        sessions = sessions [offset: offset + self._t]
+        
         return request.render('open_academy_controllers.sessions_template', {
-            'session': sessions.sorted(key=lambda r: r.initial_date),
-        })
+            'sessions': sessions,
+            'sort_by': sort_by,
+            'pager': pager,
+        })                        
         
     @http.route('/session/<int:id>', auth='public', website=True)
     def session(self, id):

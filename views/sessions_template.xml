@@ -11,6 +11,22 @@
                     </div>
                     <div class="container mt-2">
                         <h3>My Sessions</h3>
+                        <form method="post" action="/sessions">
+                            <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
+                                <i class="fa fa-filter"></i>
+                            </button>
+                            <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="sort_by">
+                                <option name="sort_by" value="name" t-att-selected="'selected' if sort_by == 'name' else None">Name (A-Z)</option>
+                                <option name="sort_by" value="-name" t-att-selected="'selected' if sort_by == 'name_desc' else None">Name (Z-A)</option>
+                                <option name="sort_by" value="initial_date" t-att-selected="'selected' if sort_by == 'initial_date' else None">Start date</option>
+                                <option name="sort_by" value="duration" t-att-selected="'selected' if sort_by == 'duration' else None">Duration</option>
+                                <option name="sort_by" value="taken_seats" t-att-selected="'selected' if sort_by == 'taken_seats' else None">Occupation</option>
+                                <option name="sort_by" value="instructor" t-att-selected="'selected' if sort_by == 'instructor' else None">Instructor (A-Z)</option>
+                                <option name="sort_by" value="-instructor" t-att-selected="'selected' if sort_by == 'instructor_desc' else None">Instructor (Z-A)</option>
+                                <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not sort_by else None">Sort by</option>
+                            </select>
+                            <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                        </form>  
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -18,12 +34,12 @@
                                     <th>Course</th>
                                     <th>Start Date</th>
                                     <th>Duration</th>
-                                    <th>Seats</th>
+                                    <th>Occupation</th>
                                     <th>Leave</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <t t-foreach="session" t-as="s">
+                                <t t-foreach="sessions" t-as="s">
                                     <tr>
                                         <td>
                                             <a t-att-href="'/session/' + str(s.id)">
@@ -36,8 +52,8 @@
                                             </a>
                                         </td>
                                         <td><t t-esc="s.initial_date"/></td>
-                                        <td><t t-esc="s.duration"/> days</td>
-                                        <td><t t-esc="s.number_of_seats"/></td>
+                                        <td><t t-esc="s.duration" t-options='{"widget": "float_time"}'/>h</td>
+                                        <td><t t-esc="s.taken_seats"/>%</td>
                                         <td>
                                             <a t-att-href="'/leave/' + str(s.id) + '/sessions'" class="btn btn-danger">X</a>
                                         </td>
@@ -45,6 +61,7 @@
                                 </t>
                             </tbody>
                         </table>
+                        <t t-call="website.pager"/>
                     </div>
                 </div>
             </t>
