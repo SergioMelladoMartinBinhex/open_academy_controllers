@@ -116,6 +116,15 @@
                         </div>
                     </div>
 
+                    <t t-set="images" t-value="course.images"/>
+                    <div class="image-carousel">
+                        <t t-foreach="images" t-as="image">
+                            <div class="image-slide">
+                                <img t-att-src="'data:image/*;base64,%s' % image.datas.decode()" alt="Image"/>
+                            </div>
+                        </t>
+                    </div>
+
                     <div class="row">
                         <div class="col-md-12 mt-2">
                             <h3>Comments</h3>
