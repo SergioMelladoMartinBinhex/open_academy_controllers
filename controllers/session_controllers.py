@@ -49,23 +49,19 @@ class SessionControllers(http.Controller):
     @http.route('/session/<int:id>', auth='public', website=True)
     def session(self, id):
         joined = False
-        if request.session.uid:
-            try:
-                session = request.env['open_academy.session'].search([('id', '=', id)])
-                user = request.env['res.users'].search([('id', '=', request.session.uid)])
-                partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
-                if partner in session.attendees:
-                    joined = True
-            except:
-                return "<h1>There is an error in the API</h1>"
-            
-            return request.render('open_academy_controllers.session_id_template', {
-                'session': session,
-                'joined': joined,
-            })
+        try:
+            session = request.env['open_academy.session'].sudo().search([('id', '=', id)])
+            user = request.env['res.users'].sudo().search([('id', '=', request.session.uid)])
+            partner = request.env['res.partner'].sudo().search([('id', '=', user.partner_id.id)])
+            if partner in session.attendees:
+                joined = True
+        except:
+            return "<h1>There is an error in the API</h1>"
         
-        else: 
-            return http.redurect_with_hash('/web/login')
+        return request.render('open_academy_controllers.session_id_template', {
+            'session': session,
+            'joined': joined,
+        })
         
     @http.route('/sessions-json', auth='public')
     def session_json(self):

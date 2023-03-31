@@ -77,34 +77,43 @@
                                             <td><t t-esc="s.duration" t-options='{"widget": "float_time"}'/>h</td>
                                             <td><t t-esc="s.taken_seats"/>%</td>
                                             <td>
-                                                <t t-if="s.attendees_count != s.number_of_seats">
-                                                    <t t-if="request.env.user.partner_id.id in s.attendees.ids">
-                                                        <div class="d-flex">
-                                                            <div class="container">
-                                                                <a class="btn btn-danger btn-block" type="button" t-att-href="'/leave/' + str(s.id) + '/course'">Leave</a>
-                                                            </div>
+                                                <t t-if="not request.session.uid">
+                                                    <div class="d-flex">
+                                                        <div class="container">
+                                                            <a class="btn btn-primary btn-block" type="button" t-att-href="'/web/login'">Login</a>
                                                         </div>
-                                                    </t>
-                                                    <t t-else="">
-                                                        <div class="d-flex">
-                                                            <div class="container">
-                                                                <a class="btn btn-primary btn-block" type="button" t-att-href="'/join/' + str(s.id) + '/course'">Join</a>
-                                                            </div>
-                                                        </div>
-                                                    </t>
+                                                    </div>
                                                 </t>
                                                 <t t-else="">
-                                                    <t t-if="request.env.user.partner_id.id in s.attendees.ids">
-                                                        <div class="d-flex">
-                                                            <div class="container">
-                                                                <a class="btn btn-danger btn-block" type="button" t-att-href="'/leave/' + str(s.id) + '/course'">Leave</a>
+                                                    <t t-if="s.attendees_count != s.number_of_seats">
+                                                        <t t-if="request.env.user.partner_id.id in s.attendees.ids">
+                                                            <div class="d-flex">
+                                                                <div class="container">
+                                                                    <a class="btn btn-danger btn-block" type="button" t-att-href="'/leave/' + str(s.id) + '/course'">Leave</a>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <div class="d-flex">
+                                                                <div class="container">
+                                                                    <a class="btn btn-primary btn-block" type="button" t-att-href="'/join/' + str(s.id) + '/course'">Join</a>
+                                                                </div>
+                                                            </div>
+                                                        </t>
                                                     </t>
                                                     <t t-else="">
-                                                        <div class="container">
-                                                            <p class="text-danger">Session is full</p>
-                                                        </div>                                             
+                                                        <t t-if="request.env.user.partner_id.id in s.attendees.ids">
+                                                            <div class="d-flex">
+                                                                <div class="container">
+                                                                    <a class="btn btn-danger btn-block" type="button" t-att-href="'/leave/' + str(s.id) + '/course'">Leave</a>
+                                                                </div>
+                                                            </div>
+                                                        </t>
+                                                        <t t-else="">
+                                                            <div class="container">
+                                                                <p class="text-danger">Session is full</p>
+                                                            </div>                                             
+                                                        </t>
                                                     </t>
                                                 </t>
                                             </td>
@@ -115,87 +124,92 @@
                             <t t-call="website.pager"/>
                         </div>
                     </div>
-
-                    <t t-set="images" t-value="course.images"/>
-                    <div class="row margin-top-32">
-                        <div class="col-md-12 mt-2">
-                            <h3>Images</h3>
-                            <div class="row">
-                                <t t-foreach="images" t-as="image">
-                                    <div class="col-md-4">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <img t-att-src="'data:image/*;base64,%s' % image.datas.decode()" alt="Image"
-                                                    style="width: 280px; height: 280px; object-fit: cover;"/>  
-                                           </div>
-                                        </div>
-                                    </div>
-                                </t>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12 mt-2">
-                            <h3>Comments</h3>
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="mt32">
-                                        <div class="media mt32">
-                                            <div>
-                                                <img t-att-src="'/web/image/res.partner/%s/image_128' % request.env.user.partner_id.id" width="40" height="40" 
-                                                    class="o_portal_chatter_avatar o_object_fit_cover" alt="Avatar" style="margin-right: 18px;"/>
-                                            </div>
-                                            <div class="media-body">
-                                                <form method="post" t-att-action="'/course/comment/' + str(course.id)">
-                                                    <textarea class="form-control" name="comment" placeholder="Write a comment..." rows="4"
-                                                        style="border-radius: 4px; background-color: #f8f8f8;"></textarea>     
-                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                                    <button actions="submit" class="btn btn-primary" style="margin-top: 16px;">
-                                                        <i class="fa fa-comment"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="mt-6" style="margin-top: 50px !important;">
-                                        <t t-foreach="course.comments" t-as="c">
-                                            <div class="o_portal_chatter_messages">
-                                                <div class="o_portal_chatter_message">
-                                                    <div class="o_portal_chatter_message_header">
-                                                        <div class="o_portal_chatter_message_header_title">
-                                                            <span class="o_portal_chatter_message_author_avatar">
-                                                                <img t-att-src="'/web/image/mail.message/' + str(c.id) + '/author_avatar'" alt="Avatar" width="40" height="40"/>
-                                                            </span>
-                                                            <span class="o_portal_chatter_message_author">
-                                                                <h5 class="d-inline"><t t-esc="c.author_id.name"/></h5>
-                                                            </span>
-                                                            <span class="o_portal_chatter_message_date">
-                                                                <p class="text-muted d-inline">- <t t-esc="c.date"/></p>
-                                                            </span>
-                                                            <form method="post" t-att-action="'/course/comment/delete/' + str(course.id)" >
-                                                                <t t-if="request.env.user.partner_id.id == c.author_id.id">
-                                                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                                                                    <input type="hidden" name="comment_id" t-att-value="c.id"/>
-                                                                    <input type="hidden" name="course_id" t-att-value="course.id"/>
-                                                                    <button type="submit" class="btn btn-danger float-right" style="display: flex; align-items: center;">
-                                                                        <i class="fa fa-trash"></i>
-                                                                    </button>
-                                                                </t>
-                                                            </form>
-                                                        </div>
-                                                    </div>
-                                                    <div class="o_portal_chatter_message_body">
-                                                        <p><t t-esc="c.body[3:-4]"/></p>
-                                                    </div>
+                    <div class="margin-top-32 margin-bottom-32">
+                        <t t-if="len(course.images) > 0">
+                            <t t-set="images" t-value="course.images"/>
+                            <div class="margin-top-32">
+                                <div class="col-md-12 mt-2">
+                                    <h3>Images</h3>
+                                    <div class="row">
+                                        <t t-foreach="images" t-as="image">
+                                            <div class="col-md-4">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <img t-att-src="'data:image/*;base64,%s' % image.datas.decode()" alt="Image"
+                                                            style="width: 280px; height: 280px; object-fit: cover;"/>  
                                                 </div>
-                                                <hr/>
+                                                </div>
                                             </div>
                                         </t>
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </t>
                     </div>
+                    <t t-if="request.session.uid">
+                        <div class="row">
+                            <div class="col-md-12 mt-2">
+                                <h3>Historial</h3>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="mt32">
+                                            <div class="media mt32">
+                                                <div>
+                                                    <img t-att-src="'/web/image/res.partner/%s/image_128' % request.env.user.partner_id.id" width="40" height="40" 
+                                                        class="o_portal_chatter_avatar o_object_fit_cover" alt="Avatar" style="margin-right: 18px;"/>
+                                                </div>
+                                                <div class="media-body">
+                                                    <form method="post" t-att-action="'/course/comment/' + str(course.id)">
+                                                        <textarea class="form-control" name="comment" placeholder="Write a comment..." rows="4"
+                                                            style="border-radius: 4px; background-color: #f8f8f8;"></textarea>     
+                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                        <button actions="submit" class="btn btn-primary" style="margin-top: 16px;">
+                                                            <i class="fa fa-comment"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-6" style="margin-top: 50px !important;">
+                                            <t t-foreach="course.comments" t-as="c">
+                                                <div class="o_portal_chatter_messages">
+                                                    <div class="o_portal_chatter_message">
+                                                        <div class="o_portal_chatter_message_header">
+                                                            <div class="o_portal_chatter_message_header_title">
+                                                                <span class="o_portal_chatter_message_author_avatar">
+                                                                    <img t-att-src="'/web/image/mail.message/' + str(c.id) + '/author_avatar'" alt="Avatar" width="40" height="40"/>
+                                                                </span>
+                                                                <span class="o_portal_chatter_message_author">
+                                                                    <h5 class="d-inline"><t t-esc="c.author_id.name"/></h5>
+                                                                </span>
+                                                                <span class="o_portal_chatter_message_date">
+                                                                    <p class="text-muted d-inline">- <t t-esc="c.date"/></p>
+                                                                </span>
+                                                                <form method="post" t-att-action="'/course/comment/delete/' + str(course.id)" >
+                                                                    <t t-if="request.env.user.partner_id.id == c.author_id.id">
+                                                                        <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                                                        <input type="hidden" name="comment_id" t-att-value="c.id"/>
+                                                                        <input type="hidden" name="course_id" t-att-value="course.id"/>
+                                                                        <button type="submit" class="btn btn-danger float-right" style="display: flex; align-items: center;">
+                                                                            <i class="fa fa-trash"></i>
+                                                                        </button>
+                                                                    </t>
+                                                                </form>
+                                                            </div>
+                                                        </div>
+                                                        <div class="o_portal_chatter_message_body">
+                                                            <p><t t-esc="c.body[3:-4]"/></p>
+                                                        </div>
+                                                    </div>
+                                                    <hr/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
                 </div>
             </t>
         </template>

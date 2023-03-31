@@ -24,17 +24,14 @@ class OpenController(http.Controller):
     
     @http.route(['/courses', '/courses/page/<int:page>'], auth='public', website=True)
     def courses(self, page=0):        
-        if request.session.uid:
-            try:
-                search = request.params.get('search')
-                if search is not None:
-                    courses = request.env['open_academy.course'].search([('title', 'ilike', search)])
-                else:
-                    courses = request.env['open_academy.course'].search([])  
-            except Exception as e:
-                return "<h1>There is an error in the API</h1> %s" % e
-        else: 
-            return http.redirect_with_hash('/web/login')
+        try:
+            search = request.params.get('search')
+            if search is not None:
+                courses = request.env['open_academy.course'].sudo().search([('title', 'ilike', search)])
+            else:
+                courses = request.env['open_academy.course'].sudo().search([])
+        except Exception as e:
+            return "<h1>There is an error in the API</h1> %s" % e
         
         sort_by = request.params.get('sort_by')
         if sort_by is None:
@@ -66,25 +63,23 @@ class OpenController(http.Controller):
         
         offset = pager ['offset']
         courses = courses [offset: offset + self._t]
-        
+ 
         return request.render('open_academy_controllers.courses_template', {
             'course': courses,
             'pager': pager,
             'filter_by': filter_by,
             'sort_by': sort_by,
         })
+        
       
     @http.route(['/course/<int:id>', '/course/<int:id>/page/<int:page>'], auth='public', website=True)
     def course(self, id, page=0):
         
-        if request.session.uid:
-            try:
-                course = request.env['open_academy.course'].search([('id', '=', id)]) 
-                sessions = request.env['open_academy.session'].search([('course', '=', id)])
-            except:
-                return "<h1>There is an error in the API</h1>"
-        else:
-            return http.redirect_with_hash('/web/login')
+        try:
+            course = request.env['open_academy.course'].sudo().search([('id', '=', id)]) 
+            sessions = request.env['open_academy.session'].sudo().search([('course', '=', id)])
+        except Exception as e:
+            return "<h1>There is an error in the API</h1> %s" % e
         
         sort_by = request.params.get('sort_by')
         if sort_by is None:
@@ -154,18 +149,10 @@ class OpenController(http.Controller):
 
     @http.route('/course/comment/<int:id>', auth='public', website=True, methods=['POST'])
     def comment(self, id):
-        comment = request.params['comment']
-
         if request.session.uid:
             try:
+                comment = request.params['comment']
                 course = request.env['open_academy.course'].search([('id', '=', id)])
-            except:
-                return "<h1>There is an error in the API</h1>"
-        else:
-            return http.redirect_with_hash('/web/login')
-        
-        if request.session.uid:
-            try:
                 user = request.env['res.users'].search([('id', '=', request.session.uid)])
                 partner = request.env['res.partner'].search([('id', '=', user.partner_id.id)])
                 c = request.env['mail.message'].create({
@@ -185,11 +172,10 @@ class OpenController(http.Controller):
             return http.redirect_with_hash('/web/login')
         
     @http.route('/course/comment/delete/<int:id>', auth='public', website=True, methods=['POST'])
-    def delete_comment(self, id):
-        comment_id = request.params['comment_id']
-        
+    def delete_comment(self, id):        
         if request.session.uid:
             try:
+                comment_id = request.params['comment_id']
                 course = request.env['open_academy.course'].search([('id', '=', id)])
                 c = request.env['mail.message'].search([('id', '=', comment_id)])
                 course.comments = [(3, c.id)]
@@ -204,27 +190,25 @@ class OpenController(http.Controller):
         
     @http.route('/course/<int:id>/documents', auth='public', website=True)
     def documents(self, id):
-        if request.session.uid:
-            try:
-                course = request.env['open_academy.course'].search([('id', '=', id)])
-                documents = course.documents
-                if not documents:
-                    return "<h1>No documents found for this course</h1>"
-                else:
-                    zip_filename = course.title + ".zip"
-                    zip_buffer = io.BytesIO()
-                    with zipfile.ZipFile(zip_buffer, "w") as zip_file:
-                        for document in documents:
-                            data = base64.b64decode(document.datas)
-                            zip_file.writestr(document.name, data)
-                    headers = [
-                        ('Content-Type', 'application/zip'),
-                        ('Content-Disposition', content_disposition(zip_filename))
-                    ]
-                    return request.make_response(zip_buffer.getvalue(), headers)
-            except Exception as e:
-                return "<h1>There is an error in the API</h1> " + str(e)
-        else:
-            return "<h1>You must be logged in to access this page</h1>"
+        try:
+            course = request.env['open_academy.course'].sudo().search([('id', '=', id)])
+            documents = course.documents
+            if not documents:
+                return "<h1>No documents found for this course</h1>"
+            else:
+                zip_filename = course.title + ".zip"
+                zip_buffer = io.BytesIO()
+                with zipfile.ZipFile(zip_buffer, "w") as zip_file:
+                    for document in documents:
+                        data = base64.b64decode(document.datas)
+                        zip_file.writestr(document.name, data)
+                headers = [
+                    ('Content-Type', 'application/zip'),
+                    ('Content-Disposition', content_disposition(zip_filename))
+                ]
+                return request.make_response(zip_buffer.getvalue(), headers)
+        except Exception as e:
+            return "<h1>There is an error in the API</h1> " + str(e)
+    
                 
                 

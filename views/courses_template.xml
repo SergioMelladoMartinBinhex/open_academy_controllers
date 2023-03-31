@@ -27,7 +27,8 @@
                                         <option name="filter_by" value="all" t-att-selected="'selected' if filter_by == 'all' else None">All</option>
                                         <option name="filter_by" value="presential" t-att-selected="'selected' if filter_by == 'presential' else None">Presential</option>
                                         <option name="filter_by" value="online" t-att-selected="'selected' if filter_by == 'online' else None">Online</option>
-                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not filter_by else None">Filter by</option>                                    </select>
+                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not filter_by else None">Filter by</option>                                    
+                                    </select>
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 </form>
 
