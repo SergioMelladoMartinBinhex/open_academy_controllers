@@ -10,6 +10,7 @@
                 </div>
                 <div class="container mt-2">
                     <div class="row">
+                        <h3>Courses</h3>
                         <div class="display-flex col-lg-12">
                             <div>
                                 <form action="/courses" method="post">

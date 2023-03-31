@@ -32,6 +32,7 @@
                                 <tr>
                                     <th>Name</th>
                                     <th>Course</th>
+                                    <th>Instructor</th>
                                     <th>Start Date</th>
                                     <th>Duration</th>
                                     <th>Occupation</th>
@@ -51,6 +52,7 @@
                                                 <t t-esc="s.course.title"/>
                                             </a>
                                         </td>
+                                        <td><t t-esc="s.instructor.name"/></td>
                                         <td><t t-esc="s.initial_date"/></td>
                                         <td><t t-esc="s.duration" t-options='{"widget": "float_time"}'/>h</td>
                                         <td><t t-esc="s.taken_seats"/>%</td>

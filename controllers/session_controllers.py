@@ -25,8 +25,11 @@ class SessionControllers(http.Controller):
             reverse = sort_by.startswith('-')
             if reverse is True:
                 sort_criteria = sort_by[1:]
-            sessions = sessions.sorted(key=lambda x: getattr(x, sort_criteria), reverse=reverse)
-            
+
+            if sort_criteria == 'instructor':
+                sessions = sorted(sessions, key=lambda x: x.instructor.name, reverse=reverse)
+            else:
+                sessions = sorted(sessions, key=lambda x: getattr(x, sort_criteria), reverse=reverse)            
         pager = request.website.pager(
             url="/sessions",
             total=len(sessions),

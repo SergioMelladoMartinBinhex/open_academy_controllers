@@ -41,7 +41,11 @@ class OpenController(http.Controller):
             reverse = sort_by.startswith('-')
             if reverse is True:
                 sort_criteria = sort_by[1:]
-            courses = courses.sorted(key=lambda x: getattr(x, sort_criteria), reverse=reverse)
+                
+            if sort_criteria == 'responsible':
+                courses = sorted(courses, key=lambda x: x.responsible.name, reverse=reverse)
+            else:
+                courses = sorted(courses, key=lambda x: getattr(x, sort_criteria), reverse=reverse)
             
         filter_by = request.params.get('filter_by')
         if filter_by is not None:
@@ -89,8 +93,11 @@ class OpenController(http.Controller):
             reverse = sort_by.startswith('-')
             if reverse is True:
                 sort_criteria = sort_by[1:]
-            sessions = sessions.sorted(key=lambda x: getattr(x, sort_criteria), reverse=reverse)
-            
+
+            if sort_criteria == 'instructor':
+                sessions = sorted(sessions, key=lambda x: x.instructor.name, reverse=reverse) 
+            else:   
+                sessions = sorted(sessions, key=lambda x: getattr(x, sort_criteria), reverse=reverse)         
         pager = request.website.pager(
             url="/course/%s" % id,
             total=len(sessions),

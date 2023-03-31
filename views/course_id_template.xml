@@ -44,11 +44,11 @@
                                 <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="sort_by">
                                     <option name="sort_by" value="name" t-att-selected="'selected' if sort_by == 'name' else None">Name (A-Z)</option>
                                     <option name="sort_by" value="-name" t-att-selected="'selected' if sort_by == 'name_desc' else None">Name (Z-A)</option>
+                                    <option name="sort_by" value="instructor" t-att-selected="'selected' if sort_by == 'instructor' else None">Instructor (A-Z)</option>
+                                    <option name="sort_by" value="-instructor" t-att-selected="'selected' if sort_by == 'instructor_desc' else None">Instructor (Z-A)</option>
                                     <option name="sort_by" value="initial_date" t-att-selected="'selected' if sort_by == 'initial_date' else None">Start date</option>
                                     <option name="sort_by" value="duration" t-att-selected="'selected' if sort_by == 'duration' else None">Duration</option>
                                     <option name="sort_by" value="taken_seats" t-att-selected="'selected' if sort_by == 'taken_seats' else None">Occupation</option>
-                                    <option name="sort_by" value="instructor" t-att-selected="'selected' if sort_by == 'instructor' else None">Instructor (A-Z)</option>
-                                    <option name="sort_by" value="-instructor" t-att-selected="'selected' if sort_by == 'instructor_desc' else None">Instructor (Z-A)</option>
                                     <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not sort_by else None">Sort by</option>
                                 </select>
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
@@ -137,7 +137,7 @@
                                                     <div class="card-body">
                                                         <img t-att-src="'data:image/*;base64,%s' % image.datas.decode()" alt="Image"
                                                             style="width: 280px; height: 280px; object-fit: cover;"/>  
-                                                </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </t>
