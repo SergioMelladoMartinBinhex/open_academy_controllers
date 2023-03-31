@@ -6,19 +6,33 @@
                     <ol class="o_portal_submenu breadcrumb mb-0 py-2 flex-grow-1 row">
                         <li><a href="/my/home"><i class="fa fa-home"></i></a></li>
                         <li><a href="/courses">/ Courses</a></li>
-                        <li><a t-att-href="'/course/' + str(session.course.id)">/ <t t-esc="session.course.title"/></a></li>
-                        <li class="active">/ <t t-esc="session.name"/></li>
+                        <li>
+                            <a t-att-href="'/course/' + str(session.course.id)">
+                                / 
+                                <t t-esc="session.course.title"/>
+                            </a>
+                        </li>
+                        <li class="active">
+                            / 
+                            <t t-esc="session.name"/>
+                        </li>
                     </ol>
                 </div>
                 <div class="container mt-2">
                     <div class="row">
                         <div class="col-md-12">
-                            <h1><t t-esc="session.name"/></h1>
+                            <h1>
+                                <t t-esc="session.name"/>
+                            </h1>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
-                            <p><a t-att-href="'/course/' + str(session.course.id)"><t t-esc="session.course.title"/></a></p>
+                            <p>
+                                <a t-att-href="'/course/' + str(session.course.id)">
+                                    <t t-esc="session.course.title"/>
+                                </a>
+                            </p>
                         </div>
                     </div>
                     <div class="d-flex justify-content-center">
@@ -28,34 +42,41 @@
                                     <h4>Start Date</h4>
                                 </div>
                                 <div class="card-body">
-                                    <p><t t-esc="session.initial_date"/></p>
+                                    <p>
+                                        <t t-esc="session.initial_date"/>
+                                    </p>
                                 </div>
                             </div>
-
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Duration</h4>
                                 </div>
                                 <div class="card-body">
-                                    <p><t t-esc="session.duration"/> days</p>
+                                    <p>
+                                        <t t-esc="session.duration"/>
+                                        days
+                                    </p>
                                 </div>
                             </div>
-
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Ocuppation</h4>
                                 </div>
                                 <div class="card-body">
-                                    <p><t t-esc="round(session.taken_seats, 2)"/>%</p>
+                                    <p>
+                                        <t t-esc="round(session.taken_seats, 2)"/>
+                                        %
+                                    </p>
                                 </div>
                             </div>
-
                             <div class="card">
                                 <div class="card-header">
                                     <h4>Instructor</h4>
                                 </div>
                                 <div class="card-body">
-                                    <p><t t-esc="session.instructor.name"/></p>
+                                    <p>
+                                        <t t-esc="session.instructor.name"/>
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -77,7 +98,7 @@
                                         <div class="d-flex justify-content-center">
                                             <div class="d-inline-block mx-2">
                                                 <a class="btn btn-primary btn-block" type="button" t-att-href="'/join/' + str(session.id) + '/congrats'">Join to the session</a>
-                                            </div> 
+                                            </div>
                                         </div>
                                     </t>
                                     <t t-else="">
@@ -112,7 +133,7 @@
                                             style="border-radius: 4px; background-color: #f8f8f8;"></textarea>     
                                         <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                         <button actions="submit" class="btn btn-primary" style="margin-top: 16px;">
-                                            <i class="fa fa-comment"></i>
+                                        <i class="fa fa-comment"></i>
                                         </button>
                                     </form>
                                 </div>
@@ -124,13 +145,18 @@
                                             <div class="o_portal_chatter_message_header">
                                                 <div class="o_portal_chatter_message_header_title">
                                                     <span class="o_portal_chatter_message_author_avatar">
-                                                        <img t-att-src="'/web/image/mail.message/' + str(s.id) + '/author_avatar'" alt="Avatar" width="40" height="40"/>
+                                                    <img t-att-src="'/web/image/mail.message/' + str(s.id) + '/author_avatar'" alt="Avatar" width="40" height="40"/>
                                                     </span>
                                                     <span class="o_portal_chatter_message_author">
-                                                        <h5 class="d-inline"><t t-esc="s.author_id.name"/></h5>
+                                                        <h5 class="d-inline">
+                                                            <t t-esc="s.author_id.name"/>
+                                                        </h5>
                                                     </span>
                                                     <span class="o_portal_chatter_message_date">
-                                                        <p class="text-muted d-inline">- <t t-esc="s.date"/></p>
+                                                        <p class="text-muted d-inline">
+                                                            - 
+                                                            <t t-esc="s.date"/>
+                                                        </p>
                                                     </span>
                                                     <form method="post" t-att-action="'/session/comment/delete/' + str(session.id)" >
                                                         <t t-if="request.env.user.partner_id.id == s.author_id.id">
@@ -138,14 +164,16 @@
                                                             <input type="hidden" name="comment_id" t-att-value="s.id"/>
                                                             <input type="hidden" name="session_id" t-att-value="session.id"/>
                                                             <button type="submit" class="btn btn-danger float-right" style="display: flex; align-items: center;">
-                                                                <i class="fa fa-trash"></i>
+                                                            <i class="fa fa-trash"></i>
                                                             </button>
                                                         </t>
                                                     </form>
                                                 </div>
                                             </div>
                                             <div class="o_portal_chatter_message_body">
-                                                <p><t t-esc="s.body[3:-4]"/></p>
+                                                <p>
+                                                    <t t-esc="s.body[3:-4]"/>
+                                                </p>
                                             </div>
                                         </div>
                                         <hr/>
@@ -157,5 +185,5 @@
                 </div>
             </t>
         </template>
-    </data>         
+    </data>
 </odoo>

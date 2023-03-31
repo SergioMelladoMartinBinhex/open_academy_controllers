@@ -6,7 +6,10 @@
                     <div class="col-md-12">
                         <h1>Congratulations!</h1>
                         <div class="mx-2">
-                            <h5>You have joined to the session <t t-esc="session.name"/></h5>
+                            <h5>
+                                You have joined to the session 
+                                <t t-esc="session.name" />
+                            </h5>
                         </div>
                         <table class="table table-striped">
                             <thead>
@@ -19,18 +22,32 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><t t-esc="session.course.title"/></td>
-                                    <td><t t-esc="session.course.responsible.name"/></td>
-                                    <td><t t-esc="session.initial_date"/></td>
-                                    <td><t t-esc="session.duration"/> days</td>
+                                    <td>
+                                        <t t-esc="session.course.title" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="session.course.responsible.name" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="session.initial_date" />
+                                    </td>
+                                    <td>
+                                        <t t-esc="session.duration" />
+                                        days
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="container">
                         <div class="d-grid mx-auto">
-                            <a class="btn btn-primary" type="button" t-att-href="'/course/' + str(session.course.id)">Back to the course</a>
-                        </div> 
+                            <a
+                                class="btn btn-primary"
+                                type="button"
+                                t-att-href="'/course/' + str(session.course.id)"
+                                >Back to the course</a
+                                >
+                        </div>
                     </div>
                 </div>
             </div>

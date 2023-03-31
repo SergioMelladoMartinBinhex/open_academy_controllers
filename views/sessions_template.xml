@@ -13,7 +13,7 @@
                         <h3>My Sessions</h3>
                         <form method="post" action="/sessions">
                             <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
-                                <i class="fa fa-filter"></i>
+                            <i class="fa fa-filter"></i>
                             </button>
                             <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="sort_by">
                                 <option name="sort_by" value="name" t-att-selected="'selected' if sort_by == 'name' else None">Name (A-Z)</option>
@@ -26,7 +26,7 @@
                                 <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not sort_by else None">Sort by</option>
                             </select>
                             <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
-                        </form>  
+                        </form>
                         <table class="table table-striped">
                             <thead>
                                 <tr>
@@ -52,10 +52,20 @@
                                                 <t t-esc="s.course.title"/>
                                             </a>
                                         </td>
-                                        <td><t t-esc="s.instructor.name"/></td>
-                                        <td><t t-esc="s.initial_date"/></td>
-                                        <td><t t-esc="s.duration" t-options='{"widget": "float_time"}'/>h</td>
-                                        <td><t t-esc="s.taken_seats"/>%</td>
+                                        <td>
+                                            <t t-esc="s.instructor.name"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="s.initial_date"/>
+                                        </td>
+                                        <td>
+                                            <t t-esc="s.duration" t-options='{"widget": "float_time"}'/>
+                                            h
+                                        </td>
+                                        <td>
+                                            <t t-esc="s.taken_seats"/>
+                                            %
+                                        </td>
                                         <td>
                                             <a t-att-href="'/leave/' + str(s.id) + '/sessions'" class="btn btn-danger">X</a>
                                         </td>
@@ -68,13 +78,15 @@
                 </div>
             </t>
         </template>
-
         <template id="sessions_menu" inherit_id="portal.portal_my_home">
             <xpath expr="//div[hasclass('o_portal_docs')]" position="after">
                 <div class="container mt-5">
                     <h3>Open Academy</h3>
-                    <a href="/sessions" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">My Sessions
-                        <span class="badge badge-primary badge-pill"><t t-esc="num_sessions"/></span>
+                    <a href="/sessions" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between">
+                        My Sessions
+                        <span class="badge badge-primary badge-pill">
+                            <t t-esc="num_sessions"/>
+                        </span>
                     </a>
                 </div>
             </xpath>
