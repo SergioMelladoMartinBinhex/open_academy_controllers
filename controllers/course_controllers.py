@@ -22,7 +22,7 @@ class OpenController(http.Controller):
     def back_to_web(self):
         return http.redirect_with_hash('/web')
     
-    @http.route(['/courses', '/courses/page/<int:page>'], auth='public', website=True)
+    @http.route(['/courses', '/courses/page/<int:page>', '/' ], auth='public', website=True)
     def courses(self, page=0):        
         try:
             search = request.params.get('search')
