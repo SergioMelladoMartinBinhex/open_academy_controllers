@@ -22,10 +22,11 @@
                             <div style="margin-bottom: 10px;">
                                 <t t-if="len(course.documents) > 0">
                                     <button class="btn btn-primary ">
-                                        <a t-att-href="'/course/' + str(course.id) + '/documents'">
-                                            Documents <i class="fa fa-download"></i>
+                                        <a t-att-href="'/course/' + str(course.id) + '/documents'">                                        
+                                            Documents <i class="fa fa-file"></i>
                                         </a>
                                     </button>
+                                    
                                 </t>
                             </div>
                             <hr/>
@@ -41,7 +42,7 @@
                                 <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
                                     <i class="fa fa-filter"></i>
                                 </button>
-                                <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="sort_by">
+                                <select class="form-control" style="width: 15%; margin-bottom: 10px; float: right;" name="sort_by">
                                     <option name="sort_by" value="name" t-att-selected="'selected' if sort_by == 'name' else None">Name (A-Z)</option>
                                     <option name="sort_by" value="-name" t-att-selected="'selected' if sort_by == 'name_desc' else None">Name (Z-A)</option>
                                     <option name="sort_by" value="instructor" t-att-selected="'selected' if sort_by == 'instructor' else None">Instructor (A-Z)</option>

@@ -10,26 +10,27 @@
                 </div>
                 <div class="container mt-2">
                     <div class="row">
-                        <h3>Courses</h3>
+                        <div class="col-lg-12">
+                            <h1>Courses</h1>
+                        </div>
                         <div class="display-flex col-lg-12">
                             <div>
                                 <form action="/courses" method="post">
                                     <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
                                         <i class="fa fa-filter"></i>
                                     </button>
-                                    <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="sort_by">
+                                    <select class="form-control" style="width: 12%; margin-bottom: 10px; float: right;" name="sort_by">
                                         <option name="sort_by" value="title" t-att-selected="'selected' if sort_by == 'title' else None">Title (A-Z)</option>
                                         <option name="sort_by" value="-title" t-att-selected="'selected' if sort_by == '-title' else None">Title (Z-A)</option>
                                         <option name="sort_by" value="responsible" t-att-selected="'selected' if sort_by == 'responsible' else None">Responsible (A-Z)</option>
                                         <option name="sort_by" value="-responsible" t-att-selected="'selected' if sort_by == '-responsible' else None">Responsible (Z-A)</option>
                                         <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not sort_by else None">Sort by</option>
                                     </select>
-                                    <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="filter_by">
+                                    <select class="form-control" style="width: 12%; margin-bottom: 10px; float: right;" name="filter_by">
                                         <option name="filter_by" value="all" t-att-selected="'selected' if filter_by == 'all' else None">All</option>
                                         <option name="filter_by" value="presential" t-att-selected="'selected' if filter_by == 'presential' else None">Presential</option>
                                         <option name="filter_by" value="online" t-att-selected="'selected' if filter_by == 'online' else None">Online</option>
-                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not filter_by else None">Filter by</option>                                    
-                                    </select>
+                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not filter_by else None">Filter by</option>                                    </select>
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 </form>
 
@@ -60,7 +61,7 @@
                                         <td><a t-att-href="'/course/' + str(c.id)"><t t-esc="c.title"/></a></td>
                                         <td><t t-esc="c.responsible.name"/></td>
                                         <td><t t-esc="len(c.sessions)"/></td>
-                                        <td><t t-if="c.type == 'presential'"><span class="badge badge-success">Presencial</span></t>
+                                        <td><t t-if="c.type == 'presential'"><span class="badge badge-success">Presential</span></t>
                                             <t t-else=""><span class="badge badge-primary">Online</span></t>
                                         </td>
                                     </tr>
