@@ -16,21 +16,23 @@
                         <div class="display-flex col-lg-12">
                             <div>
                                 <form action="/courses" method="post">
-                                    <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
-                                    <i class="fa fa-filter"></i>
-                                    </button>
-                                    <select class="form-control" style="width: 12%; margin-bottom: 10px; float: right;" name="sort_by">
+                                    <select class="form-control" style="width: 13%; margin-bottom: 10px; float: right;" name="sort_by" onchange="this.form.submit()">
                                         <option name="sort_by" value="title" t-att-selected="'selected' if sort_by == 'title' else None">Title (A-Z)</option>
                                         <option name="sort_by" value="-title" t-att-selected="'selected' if sort_by == '-title' else None">Title (Z-A)</option>
                                         <option name="sort_by" value="responsible" t-att-selected="'selected' if sort_by == 'responsible' else None">Responsible (A-Z)</option>
                                         <option name="sort_by" value="-responsible" t-att-selected="'selected' if sort_by == '-responsible' else None">Responsible (Z-A)</option>
                                         <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not sort_by else None">Sort by</option>
                                     </select>
-                                    <select class="form-control" style="width: 12%; margin-bottom: 10px; float: right;" name="filter_by">
+                                    <select class="form-control" style="width: 13%; margin-bottom: 10px; float: right;" name="filter_by" onchange="this.form.submit()">
                                         <option name="filter_by" value="all" t-att-selected="'selected' if filter_by == 'all' else None">All</option>
                                         <option name="filter_by" value="presential" t-att-selected="'selected' if filter_by == 'presential' else None">Presential</option>
                                         <option name="filter_by" value="online" t-att-selected="'selected' if filter_by == 'online' else None">Online</option>
-                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not filter_by else None">Filter by</option>
+                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not filter_by else None">Modalidad</option>
+                                    </select>
+                                    <select class="form-control" style="width: 13%; margin-bottom: 10px; float: right;" name="available" onchange="this.form.submit()">
+                                        <option name="available" value="all" t-att-selected="'selected' if available == 'all' else None">Todos</option>
+                                        <option name="available" value="yes" t-att-selected="'selected' if available == 'yes' else None">Solo con sesiones disponibles</option>
+                                        <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not available else None">Disponibilidad</option>
                                     </select>
                                     <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                                 </form>

@@ -29,7 +29,8 @@ class SessionControllers(http.Controller):
             if sort_criteria == 'instructor':
                 sessions = sorted(sessions, key=lambda x: x.instructor.name, reverse=reverse)
             else:
-                sessions = sorted(sessions, key=lambda x: getattr(x, sort_criteria), reverse=reverse)            
+                sessions = sorted(sessions, key=lambda x: getattr(x, sort_criteria), reverse=reverse)   
+                                 
         pager = request.website.pager(
             url="/sessions",
             total=len(sessions),

@@ -12,10 +12,7 @@
                     <div class="container mt-2">
                         <h3>My Sessions</h3>
                         <form method="post" action="/sessions">
-                            <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
-                            <i class="fa fa-filter"></i>
-                            </button>
-                            <select class="form-control" style="width: 10%; margin-bottom: 10px; float: right;" name="sort_by">
+                            <select class="form-control" style="width: 12%; margin-bottom: 10px; float: right;" name="sort_by" onchange="this.form.submit()">
                                 <option name="sort_by" value="name" t-att-selected="'selected' if sort_by == 'name' else None">Name (A-Z)</option>
                                 <option name="sort_by" value="-name" t-att-selected="'selected' if sort_by == 'name_desc' else None">Name (Z-A)</option>
                                 <option name="sort_by" value="initial_date" t-att-selected="'selected' if sort_by == 'initial_date' else None">Start date</option>

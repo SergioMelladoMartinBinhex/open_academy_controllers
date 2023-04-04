@@ -51,6 +51,17 @@ class OpenController(http.Controller):
         if filter_by is not None:
             if filter_by != 'all':
                 courses = [course for course in courses if getattr(course, 'type') == filter_by]
+                
+        available = request.params.get('available')
+        if available is not None:
+            if available == 'yes':
+                for course in courses:
+                    for session in course.sessions:
+                        if session.taken_seats != 100:
+                            continue
+                        else:
+                            courses.remove(course)
+                            break
 
         total = len(courses)
         pager = request.website.pager(
@@ -62,6 +73,7 @@ class OpenController(http.Controller):
                 'search': search or None, 
                 'sort_by': sort_by or None,
                 'filter': filter_by or None,
+                'available': available or None,
             },
         )
         
@@ -73,6 +85,7 @@ class OpenController(http.Controller):
             'pager': pager,
             'filter_by': filter_by,
             'sort_by': sort_by,
+            'available': available,
         })
         
       
@@ -97,7 +110,16 @@ class OpenController(http.Controller):
             if sort_criteria == 'instructor':
                 sessions = sorted(sessions, key=lambda x: x.instructor.name, reverse=reverse) 
             else:   
-                sessions = sorted(sessions, key=lambda x: getattr(x, sort_criteria), reverse=reverse)         
+                sessions = sorted(sessions, key=lambda x: getattr(x, sort_criteria), reverse=reverse)      
+                
+        available = request.params.get('available')
+        if available is not None:
+            if available == 'yes':
+                for session in sessions:
+                    if session.taken_seats == 100.0:
+                        sessions.remove(session)
+                        
+                        
         pager = request.website.pager(
             url="/course/%s" % id,
             total=len(sessions),
@@ -105,6 +127,7 @@ class OpenController(http.Controller):
             step=self._t,
             url_args={
                 'sort_by': sort_by or None,
+                'available': available or None,
             },
         )
         
@@ -116,6 +139,7 @@ class OpenController(http.Controller):
             'sessions': sessions,
             'sort_by': sort_by,
             'pager': pager,
+            'available': available,
         })            
         
     @http.route('/courses-json', auth='public')

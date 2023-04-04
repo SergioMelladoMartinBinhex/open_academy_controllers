@@ -45,10 +45,7 @@
                         <div class="col-md-12 mt-2">
                             <h3>Sessions</h3>
                             <form method="post" t-att-action="'/course/' + str(course.id)">
-                                <button type="submit" class="btn btn-primary" style="float: right; margin-bottom: 10px;">
-                                <i class="fa fa-filter"></i>
-                                </button>
-                                <select class="form-control" style="width: 15%; margin-bottom: 10px; float: right;" name="sort_by">
+                                <select class="form-control" style="width: 15%; margin-bottom: 10px; float: right;" name="sort_by" onchange="this.form.submit()">
                                     <option name="sort_by" value="name" t-att-selected="'selected' if sort_by == 'name' else None">Name (A-Z)</option>
                                     <option name="sort_by" value="-name" t-att-selected="'selected' if sort_by == 'name_desc' else None">Name (Z-A)</option>
                                     <option name="sort_by" value="instructor" t-att-selected="'selected' if sort_by == 'instructor' else None">Instructor (A-Z)</option>
@@ -57,6 +54,11 @@
                                     <option name="sort_by" value="duration" t-att-selected="'selected' if sort_by == 'duration' else None">Duration</option>
                                     <option name="sort_by" value="taken_seats" t-att-selected="'selected' if sort_by == 'taken_seats' else None">Occupation</option>
                                     <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not sort_by else None">Sort by</option>
+                                </select>
+                                <select class="form-control" style="width: 13%; margin-bottom: 10px; float: right;" name="available" onchange="this.form.submit()">
+                                    <option name="available" value="all" t-att-selected="'selected' if available == 'all' else None">Todos</option>
+                                    <option name="available" value="yes" t-att-selected="'selected' if available == 'yes' else None">Solo sesiones con sitios libres</option>
+                                    <option disabled="disabled" hidden="hidden" t-att-selected="'selected' if not available else None">Disponibilidad</option>
                                 </select>
                                 <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
                             </form>
