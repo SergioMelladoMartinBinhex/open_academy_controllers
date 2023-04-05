@@ -87,8 +87,7 @@ class OpenController(http.Controller):
             'sort_by': sort_by,
             'available': available,
         })
-        
-      
+ 
     @http.route(['/course/<int:id>', '/course/<int:id>/page/<int:page>'], auth='public', website=True)
     def course(self, id, page=0):
         
@@ -118,8 +117,7 @@ class OpenController(http.Controller):
                 for session in sessions:
                     if session.taken_seats == 100.0:
                         sessions.remove(session)
-                        
-                        
+                                       
         pager = request.website.pager(
             url="/course/%s" % id,
             total=len(sessions),
@@ -158,8 +156,6 @@ class OpenController(http.Controller):
             
         return request.make_response(json.dumps(results), headers=[('Content-Type', 'application/json')])
         
-
-        
     @http.route(['/my', '/my/home'], auth='public', website=True)
     def my_sessions(self):  
         
@@ -175,8 +171,7 @@ class OpenController(http.Controller):
         
         return request.render('open_academy_controllers.sessions_menu', {
             'num_sessions': len(sessions),
-        })
-        
+        })    
 
     @http.route('/course/comment/<int:id>', auth='public', website=True, methods=['POST'])
     def comment(self, id):
@@ -240,6 +235,4 @@ class OpenController(http.Controller):
                 return request.make_response(zip_buffer.getvalue(), headers)
         except Exception as e:
             return "<h1>There is an error in the API</h1> " + str(e)
-    
-                
-                
+              
